@@ -1,5 +1,9 @@
 <?php
+
 /**
+ * 
+ * 記事詳細ページ
+ * 
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Article $article
  */

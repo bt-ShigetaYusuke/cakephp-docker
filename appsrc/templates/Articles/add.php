@@ -1,5 +1,13 @@
 <?php
+
 /**
+ * 
+ * 記事追加ページ
+ * 
+ * 表示方法:
+ * - 記事一覧ページの
+ * - 「NEW ARTICLE」を押下
+ * 
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Article $article
  */
@@ -17,8 +25,8 @@
             <fieldset>
                 <legend><?= __('Add Article') ?></legend>
                 <?php
-                    echo $this->Form->control('title');
-                    echo $this->Form->control('body');
+                echo $this->Form->control('title');
+                echo $this->Form->control('body');
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

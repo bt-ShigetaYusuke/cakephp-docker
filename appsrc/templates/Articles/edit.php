@@ -1,5 +1,9 @@
 <?php
+
 /**
+ * 
+ * 記事編集ページ
+ * 
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Article $article
  */
@@ -22,8 +26,8 @@
             <fieldset>
                 <legend><?= __('Edit Article') ?></legend>
                 <?php
-                    echo $this->Form->control('title');
-                    echo $this->Form->control('body');
+                echo $this->Form->control('title');
+                echo $this->Form->control('body');
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>
