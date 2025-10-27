@@ -93,19 +93,25 @@ class ArticlesController extends AppController
      */
     public function add()
     {
-        $article = $this->Articles->newEmptyEntity(); // → 空のArticleエンティティを作成。
-        // リクエストがPOSTならフォームデータを取り出し、
-        // patchEntity()でエンティティマッピング（$_accessibleに従って）。
-        if ($this->request->is('post')) {
-            $article = $this->Articles->patchEntity($article, $this->request->getData());
-            // バリデーション通過後、save()でDBにINSERT。
-            if ($this->Articles->save($article)) {
-                $this->Flash->success(__('The article has been saved.')); // → // 成功すればフラッシュメッセージを出して、
+        // 1. 空のEntityを作る（フォームの雛形）
+        $article = $this->Articles->newEmptyEntity();
 
-                return $this->redirect(['action' => 'index']); // → 一覧ページへリダイレクト。
+        // 2. フォームが送信されたらデータをマージ
+        if ($this->request->is('post')) {
+
+            // 3. ここで validationDefault()が呼ばれる
+            $article = $this->Articles->patchEntity($article, $this->request->getData());
+
+            // 4. バリデーションOKなら保存
+            if ($this->Articles->save($article)) {
+                $this->Flash->success(__('The article has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The article could not be saved. Please, try again.'));
         }
+
+        // 4. ViewにEntitを渡してフォーム生成
         $this->set(compact('article'));
     }
 
@@ -121,11 +127,13 @@ class ArticlesController extends AppController
      */
     public function edit($id = null)
     {
-        $article = $this->Articles->get($id, contain: []); // → 主キー $id で1件取得（存在しなければ例外）。
-        // リクエストが PATCH, POST, PUT の場合は、送信されたデータで更新。
+        // 1. DBから既存のEntityを取得
+        $article = $this->Articles->get($id, contain: []);
+
+        // 2. フォーム送信データをマージ
         if ($this->request->is(['patch', 'post', 'put'])) {
             $article = $this->Articles->patchEntity($article, $this->request->getData());
-            // save()が成功したら一覧へ戻る
+
             if ($this->Articles->save($article)) {
                 $this->Flash->success(__('The article has been saved.'));
 

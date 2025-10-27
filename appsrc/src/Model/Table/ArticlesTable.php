@@ -50,6 +50,16 @@ class ArticlesTable extends Table
     /**
      * Default validation rules.
      *
+     * validationDefault()ってCakePHPの標準バリデーションルール定義メソッド。
+     * 名前が決まってて、書く場所も決まってる。
+     * 書く場所はここ。 src/Model/Table/〇〇Table.php
+     * 
+     * 流れをざっくり
+     * 1. ControllerでnewEntity()やpatchEntity()を呼ぶ
+     * 2. それらの中で、Tableクラスに定義されたvalidationDefault()が自動実行される
+     * 3. Validatorオブジェクトルールを作って、ルールを追加
+     * 4. ルールに合わないデータがあれば、エラーメッセージをエンティティに格納
+     * 
      * @param \Cake\Validation\Validator $validator Validator instance.
      * @return \Cake\Validation\Validator
      */

@@ -6,6 +6,8 @@
 
 http://localhost:1024/articles
 
+### 変更内容
+
 ```
 # 前提
 
@@ -79,118 +81,4 @@ CakePHP:
 
 ブラウザ:
 `/articles` で一覧、`/articles/add` で追加できる
-```
-
-### ファイル解説
-
-```
-src/Model/Table/ArticlesTable.php
-
-# 概要
-
-CakePHPが自動生成した「テーブル（＝モデル）」の設定クラス。
-アプリが「articlesテーブルをどう扱うか」をここで定義している。
-
-# ArticlesTableの役割
-
-src/Model/Table/ArticlesTable.php
-articles テーブル全体を扱うクラス（検索・保存・削除など）
-
-src/Model/Entity/Article.php
-**articles の1行（1件）**を表すクラス
-
-# コード分解
-
-## クラス宣言と継承
-
-class ArticlesTable extends Table
-  - Table は CakePHP の ORM (Object Relational Mapper) の基底クラス。
-  - この継承により、find(), save(), delete() などのDB操作が使えるようになります。
-
-## initialize()：テーブルの基本設定
-
-public function initialize(array $config): void
-{
-  parent::initialize($config);
-
-  $this->setTable('articles'); // このモデルが対応するDBテーブル名を明示。
-  $this->setDisplayField('title'); // 一覧などでレコードを文字列表示する際に使うカラム。
-  $this->setPrimaryKey('id'); // 主キー（プライマリキー）を指定。
-
-  $this->addBehavior('Timestamp'); // 自動で created / modified カラムを更新する機能を追加。
-}
-
-## validationDefault()：バリデーション（入力チェック）
-
-public function validationDefault(Validator $validator): Validator
-{
-  $validator
-  ->scalar('title') // 文字列であること
-  ->maxLength('title', 255) // 最大255文字
-  ->requirePresence('title', 'create') // 新規登録時に必須
-  ->notEmptyString('title'); // 空文字NG
-
-  $validator
-  ->scalar('body') // 文字列であること
-  ->requirePresence('body', 'create') // 新規登録時に必須
-  ->notEmptyString('body'); // 空文字NG
-
-  return $validator;
-}
-
-title と body は必須入力。
-空欄や長すぎる文字は保存されない。
-エラー時にはフォーム側でメッセージが出る。
-
-## このファイルが担うこと
-
-DB設定:
-articles テーブルと紐づける
-
-タイムスタンプ:
-created, modified 自動更新
-
-バリデーション:
-title/body が空や長すぎると保存拒否
-
-便利メソッド:
-find, save, delete などDB操作が簡単に使えるようになる
-```
-
-```
-src/Model/Entity/Article.php
-
-CakePHP の 「エンティティ（1行分のデータを表すオブジェクト）」 のクラスです。
-つまり、articles テーブルの1件のレコードをオブジェクトとして扱うための定義になります。
-
-ArticlesTable
-対象: テーブル全体（集合）
-役割: 検索・保存・削除などを行う
-
-Article
-対象: 1行（単体）
-役割: 各カラムのデータや属性を保持する
-
-## class Article extends Entity
-
-class Article extends Entity
-
-- Entity クラスを継承して、CakePHP の エンティティ機能を使えるようにしています。
-- 「レコード1件」をオブジェクトとして扱うための基底クラスです。
-
-## $_accessible：一括代入（mass assignment）の制御
-
-protected array $_accessible = [
-  'title' => true,
-  'body' => true,
-  'created' => true,
-  'modified' => true,
-];
-
-これはセキュリティに関係する大事な設定です。
-「フォームなどでまとめて受け取った値のうち、どのフィールドを上書きしていいか」 を制御します。
-```
-
-```
-
 ```
