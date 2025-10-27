@@ -45,6 +45,12 @@ return function (RouteBuilder $routes): void {
         // /tutorial/articles/add, /tutorial/articles/edit/1, /tutorial/articles/delete/1 ... など
         $builder->connect('/articles/:action/*', ['controller' => 'Articles'])
             ->setPatterns(['action' => 'add|edit|view|delete|index']);
+
+        // /tutorial/memo を Notes コントローラへ
+        $builder->connect('/memo', ['controller' => 'Notes', 'action' => 'index']);
+        $builder->connect('/memo/:action/*', ['controller' => 'Notes'])
+            ->setPass(['id']);  // /edit/1 などのIDを受け取れるように
+
         $builder->fallbacks(DashedRoute::class);
     });
 };

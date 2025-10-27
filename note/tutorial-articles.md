@@ -1,10 +1,10 @@
 # チュートリアル
 
-## CakePHP がデータベース操作と CRUD 画面を自動生成してくれるやつ
+## 記事投稿アプリ
 
 ### URL
 
-http://localhost:1024/articles
+http://localhost:1024/tutorial/articles
 
 ### 変更内容
 
