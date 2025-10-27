@@ -15,9 +15,26 @@
             <?= $this->Form->postLink(
                 __('Delete'),
                 ['action' => 'delete', $article->id],
-                ['confirm' => __('Are you sure you want to delete # {0}?', $article->id), 'class' => 'side-nav-item']
+                [
+                    'confirm' => __('Are you sure you want to delete # {0}?', $article->id),
+                    'class' => 'side-nav-item'
+                ]
             ) ?>
-            <?= $this->Html->link(__('List Articles'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
+            <?php
+            /**
+             * FormHelperでDeleteリンクを生成。
+             * 
+             * aタグはGETリクエストのため、データ削除に使うのは不適切らしい。
+             * postLink()だと安全なんだそう。
+             * 
+             * 第三引数に confirm を入れると、確認ダイアログが出るっぽい。
+             */
+            ?>
+            <?= $this->Html->link(
+                __('List Articles'),
+                ['action' => 'index'],
+                ['class' => 'side-nav-item']
+            ) ?>
         </div>
     </aside>
     <div class="column column-80">

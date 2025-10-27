@@ -156,14 +156,32 @@ class ArticlesController extends AppController
      */
     public function delete($id = null)
     {
+        /**
+         * 1. ビュー側で $this->Form->postLink(__('Delete'), ['action' => 'delete', $article->id], 'confirm'... がクリックされる。
+         * 2. CakePHPが /articles/delete/1 に対してPOSTリクエストを送信。
+         * 3. このメソッドが呼ばれる。
+         * 4. 許可するHTTPリクエストを POST / DELETE のみに制限する。
+         *    これにより、
+         *      リンククリック（GET）による誤削除や
+         *      外部サイトからの不正アクセスを防ぐことができる
+         */
         $this->request->allowMethod(['post', 'delete']); // → セキュリティのため、HTTPメソッドをPOST/DELETEに限定。
+
+        // 5. Articles テーブルから、指定された $id のレコードを取得する
         $article = $this->Articles->get($id);
-        if ($this->Articles->delete($article)) { // → 結果に応じてメッセージを出しわけ
+
+        // 6. 実際にデータベースから該当レコードを削除する
+        if ($this->Articles->delete($article)) {
+
+            // 7.1. 成功メッセージ
             $this->Flash->success(__('The article has been deleted.'));
         } else {
+
+            // 7.2. 失敗メッセージ
             $this->Flash->error(__('The article could not be deleted. Please, try again.'));
         }
 
-        return $this->redirect(['action' => 'index']); // → 一覧へ戻る。
+        // 8. 記事一覧にリダイレクトさせる
+        return $this->redirect(['action' => 'index']);
     }
 }

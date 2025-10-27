@@ -43,6 +43,13 @@
                 <strong><?= __('Body') ?></strong>
                 <blockquote>
                     <?= $this->Text->autoParagraph(h($article->body)); ?>
+                    <?php
+                    /**
+                     * TextHelperのメソッド。
+                     * 
+                     * 渡されたテキストを改行 (\n\n) で分割して自動的に pタグで囲む。
+                     */
+                    ?>
                 </blockquote>
             </div>
         </div>
