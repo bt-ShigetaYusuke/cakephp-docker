@@ -1,96 +1,50 @@
 <?php
+
 /**
- * Routes configuration.
- *
- * In this file, you set up routes to your controllers and their actions.
- * Routes are very important mechanism that allows you to freely connect
- * different URLs to chosen controllers and their actions (functions).
- *
- * It's loaded within the context of `Application::routes()` method which
- * receives a `RouteBuilder` instance `$routes` as method argument.
- *
- * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @link          https://cakephp.org CakePHP(tm) Project
- * @license       https://opensource.org/licenses/mit-license.php MIT License
+ * URLパターンと、呼び出すコントローラ／アクションの対応表を書くファイル
+ * 
+ * つまり、「どのURLを叩いたときに、どの処理を実行するか」を決める“地図”のようなもの。
+ * 
  */
 
 use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\RouteBuilder;
 
-/*
- * This file is loaded in the context of the `Application` class.
- * So you can use `$this` to reference the application class instance
- * if required.
- */
 return function (RouteBuilder $routes): void {
-    /*
-     * The default class to use for all routes
-     *
-     * The following route classes are supplied with CakePHP and are appropriate
-     * to set as the default:
-     *
-     * - Route
-     * - InflectedRoute
-     * - DashedRoute
-     *
-     * If no call is made to `Router::defaultRouteClass()`, the class used is
-     * `Route` (`Cake\Routing\Route\Route`)
-     *
-     * Note that `Route` does not do any inflections on URLs which will result in
-     * inconsistently cased URLs when used with `{plugin}`, `{controller}` and
-     * `{action}` markers.
+    /**
+     * URLの命名ルールを決める
+     * 
+     * DashedRoute なら、
+     * /user-profile → UserProfileController で解釈する。
      */
     $routes->setRouteClass(DashedRoute::class);
 
+    /**
+     * 「/（ルートパス）以下のURLはこの中で定義する」というグループ。
+     * 
+     * この中に connect() を書いて、URLとコントローラを結びつける。
+     */
     $routes->scope('/', function (RouteBuilder $builder): void {
-        /*
-         * Here, we are connecting '/' (base path) to a controller called 'Pages',
-         * its action called 'display', and we pass a param to select the view file
-         * to use (in this case, templates/Pages/home.php)...
-         */
+        // / にアクセスしたら、PagesController の display('home') を呼ぶ。
         $builder->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
 
-        /*
-         * ...and connect the rest of 'Pages' controller's URLs.
-         */
+        // /pages/〇〇 にアクセスしたら PagesController::display(〇〇) を呼ぶ。
         $builder->connect('/pages/*', 'Pages::display');
 
-        /*
-         * Connect catchall routes for all controllers.
-         *
-         * The `fallbacks` method is a shortcut for
-         *
-         * ```
-         * $builder->connect('/{controller}', ['action' => 'index']);
-         * $builder->connect('/{controller}/{action}/*', []);
-         * ```
-         *
-         * It is NOT recommended to use fallback routes after your initial prototyping phase!
-         * See https://book.cakephp.org/5/en/development/routing.html#fallbacks-method for more information
-         */
-        $builder->fallbacks();
+        // コントローラ名とアクション名に対応するURLを自動生成するやつ。
+        // $builder->fallbacks();
     });
 
-    /*
-     * If you need a different set of middleware or none at all,
-     * open new scope and define routes there.
-     *
-     * ```
-     * $routes->scope('/api', function (RouteBuilder $builder): void {
-     *     // No $builder->applyMiddleware() here.
-     *
-     *     // Parse specified extensions from URLs
-     *     // $builder->setExtensions(['json', 'xml']);
-     *
-     *     // Connect API actions here.
-     * });
-     * ```
+    /**
+     * /tutorial スコープ
      */
+    $routes->scope('/tutorial', function (RouteBuilder $builder) {
+        // /tutorial/articles → ArticlesController::index
+        $builder->connect('/articles', ['controller' => 'Articles', 'action' => 'index']);
+
+        // /tutorial/articles/add, /tutorial/articles/edit/1, /tutorial/articles/delete/1 ... など
+        $builder->connect('/articles/:action/*', ['controller' => 'Articles'])
+            ->setPatterns(['action' => 'add|edit|view|delete|index']);
+        $builder->fallbacks(DashedRoute::class);
+    });
 };
