@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Model\Table;
@@ -58,12 +59,14 @@ class NotesTable extends Table
             ->scalar('title')
             ->maxLength('title', 120)
             ->requirePresence('title', 'create')
-            ->notEmptyString('title');
+            // title未入力時の文言変更してみる。
+            ->notEmptyString('title', 'タイトルは必須でお願い');
 
         $validator
             ->scalar('content')
             ->requirePresence('content', 'create')
-            ->notEmptyString('content');
+            // content未入力時の文言変更してみる。
+            ->notEmptyString('content', '内容は必須でお願い');
 
         return $validator;
     }
