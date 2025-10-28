@@ -40,10 +40,16 @@ class NotesTable extends Table
     {
         parent::initialize($config);
 
+        // 1. DBのテーブル名指定
         $this->setTable('notes');
+
+        // 2. 一覧表示用のフィールド
         $this->setDisplayField('title');
+
+        // 3. 主キー設定
         $this->setPrimaryKey('id');
 
+        // 4. 自動的に日時を管理
         $this->addBehavior('Timestamp');
     }
 
@@ -56,16 +62,26 @@ class NotesTable extends Table
     public function validationDefault(Validator $validator): Validator
     {
         $validator
+            // 1. 文字列（スカラー）であることを保証
             ->scalar('title')
+
+            // 2. タイトルの最大文字数は120文字までで
             ->maxLength('title', 120)
+
+            // 3. 新規作成時にはtitleフィールドが必要
             ->requirePresence('title', 'create')
-            // title未入力時の文言変更してみる。
+
+            // 4. 空欄だったらこのメッセージでエラー表示
             ->notEmptyString('title', 'タイトルは必須でお願い');
 
         $validator
+            // 1. 文字列（スカラー）であることを保証
             ->scalar('content')
+
+            // 2. 新規作成時にはcontentフィールドが必要
             ->requirePresence('content', 'create')
-            // content未入力時の文言変更してみる。
+
+            // 3. 空欄だったらこのメッセージでエラー表示
             ->notEmptyString('content', '内容は必須でお願い');
 
         return $validator;

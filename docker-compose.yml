@@ -34,6 +34,10 @@ services:
       MYSQL_USER: app
       MYSQL_PASSWORD: secret
     # ★ 必要に応じて MySQL も公開可能
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_0900_ai_ci
+      --skip-character-set-client-handshake
     ports:
       - "2024:3306"
     volumes:
