@@ -401,3 +401,170 @@ SELECT COUNT(*) FROM {テーブル名};
 ### Update
 
 ### Delete
+
+# アプリのドキュメントを作成
+
+## 作成する順番
+
+1. 画面遷移図
+2. テーブル定義書
+3. 変数定義書
+4. フローチャート
+5. テスト項目表
+
+## 画面遷移図
+
+[figma](https://www.figma.com/board/Vr2WRi8hUN0WGZnjUsJ9NY/cakephp-docker_memo?node-id=3-62&t=FIHjDVS0fmkdnHhB-4)
+
+## テーブル定義書
+
+### 表
+
+[figma](https://www.figma.com/board/Vr2WRi8hUN0WGZnjUsJ9NY/cakephp-docker?node-id=7-947&t=iXRNSL2SL4tnGvcn-4)
+
+### テーブル一覧
+
+- notes
+
+### カラム定義
+
+```
+| notes | CREATE TABLE `notes` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `title` varchar(120) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `content` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci |
+```
+
+- 1.
+  - カラム名: id
+  - データ型: INT
+  - 桁数: 11
+  - NULL 許可: ×
+  - デフォルト値: AUTO_INCREMENT
+  - 主キー: ◎
+  - 説明: メモを一意に識別する ID
+- 2.
+  - カラム名: title
+  - データ型: VARCHAR
+  - 桁数: 120
+  - NULL 許可: ×
+  - デフォルト値: なし
+  - 主キー:
+  - 説明: メモのタイトル
+- 3.
+  - カラム名: content
+  - データ型: TEXT
+  - 桁数: -
+  - NULL 許可: ×
+  - デフォルト値: なし
+  - 主キー:
+  - 説明: メモ本文
+- 4.
+  - カラム名: created
+  - データ型: DATETIME
+  - 桁数: -
+  - NULL 許可: ×
+  - デフォルト値: なし
+  - 主キー:
+  - 説明: レコード作成日時
+- 5.
+  - カラム名: modified
+  - データ型: DATETIME
+  - 桁数: -
+  - NULL 許可: ×
+  - デフォルト値: なし
+  - 主キー:
+  - 説明: 最終更新日時
+
+### バリデーション
+
+- 1.
+  - 項目: title
+  - ルール: 必須、最大 120 文字まで、空白トリム
+- 2.
+  - 項目: content
+  - ルール: 必須
+- 3.
+  - 項目: created
+  - ルール: 自動的に CakePHP の Timestamp ビヘイビアで管理
+- 4.
+  - 項目: modified
+  - ルール: 自動的に CakePHP の Timestamp ビヘイビアで管理
+
+### null 許可って何？
+
+- NULL は何も入っていない状態を表す
+  - 0 でもない
+  - 空文字でもない
+  - 未入力・わからない・存在しない
+-
+
+## 変数定義書
+
+### 表
+
+[figma]()
+
+### 目的
+
+- 変数の意味がチーム全員に伝わること
+
+### 一覧
+
+```
+$id
+$note
+$notes
+$query
+$this->Flash->error()
+$this->Flash->success()
+$this->Notes->delete()
+$this->Notes->find()
+$this->Notes->get()
+$this->Notes->newEmptyEntity()
+$this->Notes->patchEntity()
+$this->Notes->save()
+$this->paginate()
+$this->redirect()
+$this->request->allowMethod()
+$this->request->getData()
+$this->request->is()
+$this->set(compact())
+```
+
+### 変数の種類
+
+- ローカル変数
+  - その関数（メソッド）の中だけで使える変数のこと
+  - 外からは見えない・使えない、その場限りの箱のこと。
+
+## フローチャート
+
+### ってなに？
+
+- プログラムや処理の流れを図で見えるようにしたもの
+- 処理の順番を矢印でつないで表現した図
+- フローごとに書くといいらしい。
+
+### 作る目的
+
+- 処理の全体像を掴むため
+  - コードを読まなくても「何が行われるかが」大体分かる。
+- 処理の抜け漏れを防ぐため
+  - 分岐や例外処理が全て入っているか確認できる。
+- チーム内で共有するため
+  - 非エンジニアにも説明できる。
+- テスト設計に役立てるため
+  - フローごとに正常系、異常系、分岐パターンが見える。
+
+### フロー一覧
+
+- 一覧表示フロー, index()
+- 詳細表示フロー, view($id)
+- 新規追加フロー, add()
+- 編集フロー, edit($id)
+- 削除フロー, delete($id)
