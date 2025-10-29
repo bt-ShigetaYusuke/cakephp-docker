@@ -1,1 +1,8 @@
 /note/ignore.md
+/vendor/
+/tmp/
+/logs/
+/config/.env
+/config/app_local.php
+/node_modules/
+/.env

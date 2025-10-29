@@ -60,11 +60,34 @@ bin/cake bake all tasks
 cake5を想定
 
 docker compose exec app composer require cakephp/authentication:^3.0 cakephp/authorization:^3.0
+
+ログイン機能と権限管理機能」を追加するためのライブラリ（公式プラグイン）を、
+Dockerコンテナ内でComposerを使ってインストールするコマンド。
+
+プロジェクトに2つのディレクトリが作られる
+  vendor/cakephp/authentication/
+  vendor/cakephp/authorization/
+
+composer.json に次のような記録が追加される
+  "require": {
+      "cakephp/authentication": "^3.0",
+      "cakephp/authorization": "^3.0"
+  }
+
+autoload設定が更新され、CakePHP がこれらのプラグインを自動で認識できるようになる。
+
+- 結果的にこのコマンドで「できるようになる」こと
+  - ログインフォームを作り、ユーザーごとのログインセッションを管理できる
+  - ログインユーザーしかアクセスできないページを制御できる
+  - 「自分の投稿しか編集できない」などのルールを簡単に設定できる
 ```
 
 ### ミドルウェアに追加
 
 ```php
+use Authentication\Middleware\AuthenticationMiddleware;
+use Authorization\Middleware\AuthorizationMiddleware;
+
 $middlewareQueue
   ->add(new \Authentication\Middleware\AuthenticationMiddleware($this))
   ->add(new \Authorization\Middleware\AuthorizationMiddleware($this, [
@@ -74,6 +97,10 @@ $middlewareQueue
           'queryParam' => 'redirect',
       ],
   ]));
+
+// コントローラ側でこんな感じで呼び出せるように。
+$this->Authentication->addUnauthenticatedActions(['login']);
+$this->Authorization->skipAuthorization(['index']);
 ```
 
 ## ルーティング設定
@@ -94,4 +121,10 @@ $middlewareQueue
 docker compose exec app bin/cake bake seed UsersSeed
 docker compose exec app bin/cake bake seed TasksSeed
 docker compose exec app bin/cake migrations seed
+```
+
+# sql
+
+```
+SHOW CREATE TABLE :table名
 ```

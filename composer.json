@@ -1,0 +1,6 @@
+{
+    "require": {
+        "cakephp/authentication": "^3.0",
+        "cakephp/authorization": "^3.0"
+    }
+}
