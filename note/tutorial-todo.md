@@ -59,7 +59,13 @@ bin/cake bake all tasks
 ```
 cake5を想定
 
-docker compose exec app composer require cakephp/authentication:^3.0 cakephp/authorization:^3.0
+パッケージインストール
+docker compose exec app sh -lc 'cd /var/www/html/appsrc && composer require cakephp/authentication:^3.0 cakephp/authorization:^3.0'
+docker compose exec app sh -lc 'cd /var/www/html/appsrc && composer dump-autoload -o'
+
+パッケージが入ったか確認
+docker compose exec app sh -lc 'cd /var/www/html/appsrc && composer show cakephp/authentication'
+docker compose exec app sh -lc 'cd /var/www/html/appsrc && composer show cakephp/authorization'
 
 ログイン機能と権限管理機能」を追加するためのライブラリ（公式プラグイン）を、
 Dockerコンテナ内でComposerを使ってインストールするコマンド。
@@ -80,6 +86,8 @@ autoload設定が更新され、CakePHP がこれらのプラグインを自動�
   - ログインフォームを作り、ユーザーごとのログインセッションを管理できる
   - ログインユーザーしかアクセスできないページを制御できる
   - 「自分の投稿しか編集できない」などのルールを簡単に設定できる
+
+docker compose exec app sh -lc 'composer show cakephp/authentication cakephp/authorization'
 ```
 
 ### ミドルウェアに追加
