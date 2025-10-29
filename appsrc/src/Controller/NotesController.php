@@ -45,7 +45,22 @@ class NotesController extends AppController
          */
         $query = $this->Notes->find();
 
-        // 2. paginate()メソッドでfind()の結果をページ分割する
+        /**
+         * 2. paginate()メソッドでfind()の結果をページ分割する
+         * 
+         * デフォルトは20件
+         */
+
+        /**
+         * paginateを制御したい場合
+         */
+        $this->paginate = [
+            'limit' => 10,
+            'order' => [
+                'Notes.modified' => 'desc'
+            ]
+        ];
+
         $notes = $this->paginate($query);
 
         // 3. Viewに変数を渡す

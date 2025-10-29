@@ -1,3 +1,15 @@
+# URL
+
+http://localhost:1024/tutorial/notes
+
+# Documents
+
+- [figma-画面遷移図](https://www.figma.com/board/Vr2WRi8hUN0WGZnjUsJ9NY/cakephp-docker?node-id=3-62&t=3IufiO2BQEf3SNpi-4)
+- [figma-テーブル定義書](https://www.figma.com/board/Vr2WRi8hUN0WGZnjUsJ9NY/cakephp-docker?node-id=7-947&t=3IufiO2BQEf3SNpi-4)
+- [figma-変数定義書](https://www.figma.com/board/Vr2WRi8hUN0WGZnjUsJ9NY/cakephp-docker?node-id=14-1378&t=cj1lQTGBrEhy6V5e-4)
+- [figma-フローチャート](https://www.figma.com/board/Vr2WRi8hUN0WGZnjUsJ9NY/cakephp-docker?node-id=17-1442&t=3IufiO2BQEf3SNpi-4)
+- [figma-テストケース](https://www.figma.com/board/Vr2WRi8hUN0WGZnjUsJ9NY/cakephp-docker?node-id=24-1715&t=3IufiO2BQEf3SNpi-4)
+
 # コンテナ
 
 ```
@@ -402,6 +414,14 @@ SELECT COUNT(*) FROM {テーブル名};
 
 ### Delete
 
+## DB 側で created 等を自動で挿入する
+
+```
+ALTER TABLE notes
+MODIFY created DATETIME DEFAULT CURRENT_TIMESTAMP,
+MODIFY modified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+```
+
 # アプリのドキュメントを作成
 
 ## 作成する順番
@@ -414,13 +434,7 @@ SELECT COUNT(*) FROM {テーブル名};
 
 ## 画面遷移図
 
-[figma](https://www.figma.com/board/Vr2WRi8hUN0WGZnjUsJ9NY/cakephp-docker_memo?node-id=3-62&t=FIHjDVS0fmkdnHhB-4)
-
 ## テーブル定義書
-
-### 表
-
-[figma](https://www.figma.com/board/Vr2WRi8hUN0WGZnjUsJ9NY/cakephp-docker?node-id=7-947&t=iXRNSL2SL4tnGvcn-4)
 
 ### テーブル一覧
 
@@ -568,3 +582,25 @@ $this->set(compact())
 - 新規追加フロー, add()
 - 編集フロー, edit($id)
 - 削除フロー, delete($id)
+
+## テスト項目表
+
+### 目的
+
+- 動作確認の抜け漏れ防止
+  - 画面や機能ごとに確認すべきことを一覧化して、確認漏れをなくす
+- 品質の可視化
+  - どこまで動作確認済みかを可視化できる
+- バグ発見・修正の効率化
+  - どんな操作をしたときに問題が起きたかを再現・記録できる
+- チームへの共有
+  - 何をテストしたか を他人にもわかる形で共有できる
+
+### カラム
+
+- No
+- 画面 / 機能
+- 手順
+- 期待結果
+- 結果
+- 備考
