@@ -32,25 +32,68 @@ return function (RouteBuilder $routes): void {
         $builder->connect('/pages/*', 'Pages::display');
 
         // コントローラ名とアクション名に対応するURLを自動生成するやつ。
-        // $builder->fallbacks();
-    });
+        $builder->fallbacks();
 
-    /**
-     * /tutorial スコープ
-     */
-    $routes->scope('/tutorial', function (RouteBuilder $builder) {
-        // /tutorial/articles → ArticlesController::index
-        $builder->connect('/articles', ['controller' => 'Articles', 'action' => 'index']);
+        /**
+         * /users
+         * 
+         * 単純な固定ページ 3 つ
+         */
+        $builder->scope('/users', function (RouteBuilder $b) {
+            $b->connect('/login', ['controller' => 'Users', 'action' => 'login']);
+            $b->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
+            $b->connect('/register', ['controller' => 'Users', 'action' => 'register']);
+        });
 
-        // /tutorial/articles/add, /tutorial/articles/edit/1, /tutorial/articles/delete/1 ... など
-        $builder->connect('/articles/:action/*', ['controller' => 'Articles'])
-            ->setPatterns(['action' => 'add|edit|view|delete|index']);
+        /**
+         * /tasks
+         * 
+         * setMethods() で許可メソッドを制御（セキュリティ高い）
+         * setPatterns(['id' => '\d+']) で id を数字だけに限定（安全）
+         * setPass(['id']) で URL {id} をコントローラの引数 $id に渡す
+         * 
+         * 認証・認可・安全設計。
+         */
+        $builder->scope('/tasks', function (RouteBuilder $b) {
+            $b->connect('/', ['controller' => 'Tasks', 'action' => 'index'])->setMethods(['GET']);
+            $b->connect('/add', ['controller' => 'Tasks', 'action' => 'add'])->setMethods(['GET', 'POST']);
+            $b->connect('/view/{id}', ['controller' => 'Tasks', 'action' => 'view'])
+                ->setPatterns(['id' => '\d+'])->setPass(['id'])->setMethods(['GET']);
+            $b->connect('/edit/{id}', ['controller' => 'Tasks', 'action' => 'edit'])
+                ->setPatterns(['id' => '\d+'])->setPass(['id'])->setMethods(['GET', 'POST', 'PUT', 'PATCH']);
+            $b->connect('/delete/{id}', ['controller' => 'Tasks', 'action' => 'delete'])
+                ->setPatterns(['id' => '\d+'])->setPass(['id'])->setMethods(['POST', 'DELETE']);
+            $b->connect('/toggle/{id}', ['controller' => 'Tasks', 'action' => 'toggle'])
+                ->setPatterns(['id' => '\d+'])->setPass(['id'])->setMethods(['POST']);
+        });
 
-        // /tutorial/notes を Notes コントローラへ
-        $builder->connect('/notes', ['controller' => 'Notes', 'action' => 'index']);
-        $builder->connect('/notes/:action/*', ['controller' => 'Notes'])
-            ->setPass(['id']);  // /edit/1 などのIDを受け取れるように
+        /**
+         * /articles
+         * 
+         * 「action名をURLに含めてOK」というゆるいルーティング。
+         * setPatterns(['action' => 'add|edit|view|delete|index']) で許可アクションを限定
+         * でも {id} のバリデーションはない（数字以外でも通る）
+         */
+        $builder->scope('/articles', function (RouteBuilder $b) {
+            $b->connect('/', ['controller' => 'Articles', 'action' => 'index']);
+            $b->connect('/:action/*', ['controller' => 'Articles'])
+                ->setPatterns(['action' => 'add|edit|view|delete|index']);
+        });
 
-        $builder->fallbacks(DashedRoute::class);
+        /**
+         * /notes
+         * 
+         * 一番ざっくり。
+         * /:action/* なので、action と後続の任意パラメータを全部受け取る。
+         * 
+         * setPatterns() もメソッド制限もなし
+         * ほぼ CakePHP のデフォルト動作
+         * URLも自由だけど、間違ったURLも通る（安全性・可読性やや低め）
+         */
+        $builder->scope('/notes', function (RouteBuilder $b) {
+            $b->connect('/', ['controller' => 'Notes', 'action' => 'index']);
+            $b->connect('/:action/*', ['controller' => 'Notes'])
+                ->setPass(['id']);
+        });
     });
 };

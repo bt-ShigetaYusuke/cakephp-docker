@@ -4,7 +4,7 @@
 
 ### URL
 
-http://localhost:1024/tutorial/articles
+http://localhost:1024/articles
 
 ### 変更内容
 

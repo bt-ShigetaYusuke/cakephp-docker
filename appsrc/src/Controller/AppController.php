@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -14,6 +15,7 @@ declare(strict_types=1);
  * @since     0.2.9
  * @license   https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace App\Controller;
 
 use Cake\Controller\Controller;
@@ -48,5 +50,14 @@ class AppController extends Controller
          * see https://book.cakephp.org/5/en/controllers/components/form-protection.html
          */
         //$this->loadComponent('FormProtection');
+        // 必須
+
+        // ここがポイント：Authentication と（使っていれば）Authorization をロード
+        $this->loadComponent('Authentication.Authentication');
+
+        $this->loadComponent('Authorization.Authorization', [
+            // 'skipAuthorization' => false, // ポリシー必須運用の場合
+            'skipAuthorization' => true, // ポリシー必須運用の場合
+        ]);
     }
 }

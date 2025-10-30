@@ -1,32 +1,9 @@
-<?php
-/**
- * @var \App\View\AppView $this
- * @var \App\Model\Entity\Task $task
- * @var \Cake\Collection\CollectionInterface|string[] $users
- */
-?>
-<div class="row">
-    <aside class="column">
-        <div class="side-nav">
-            <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Html->link(__('List Tasks'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
-        </div>
-    </aside>
-    <div class="column column-80">
-        <div class="tasks form content">
-            <?= $this->Form->create($task) ?>
-            <fieldset>
-                <legend><?= __('Add Task') ?></legend>
-                <?php
-                    echo $this->Form->control('user_id', ['options' => $users]);
-                    echo $this->Form->control('title');
-                    echo $this->Form->control('due_date');
-                    echo $this->Form->control('priority');
-                    echo $this->Form->control('is_done');
-                ?>
-            </fieldset>
-            <?= $this->Form->button(__('Submit')) ?>
-            <?= $this->Form->end() ?>
-        </div>
-    </div>
-</div>
+<!-- templates/Tasks/add.php -->
+<h1>タスク作成</h1>
+<?= $this->Form->create($task) ?>
+<?= $this->Form->control('title') ?>
+<?= $this->Form->control('due_date', ['type' => 'date']) ?>
+<?= $this->Form->control('priority', ['type' => 'number', 'min' => 0, 'max' => 10]) ?>
+<?= $this->Form->control('is_done', ['type' => 'checkbox', 'label' => '完了']) ?>
+<?= $this->Form->button('保存') ?>
+<?= $this->Form->end() ?>

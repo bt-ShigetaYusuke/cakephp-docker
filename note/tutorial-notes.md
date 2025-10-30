@@ -1,6 +1,6 @@
 # URL
 
-http://localhost:1024/tutorial/notes
+http://localhost:1024/notes
 
 # Documents
 

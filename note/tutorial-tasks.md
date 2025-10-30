@@ -57,6 +57,10 @@ bin/cake bake all tasks
 ## 認証・認可を導入
 
 ```
+ミドルウェア入れるのよくわからん。
+```
+
+```
 cake5を想定
 
 パッケージインストール
@@ -92,30 +96,7 @@ docker compose exec app sh -lc 'composer show cakephp/authentication cakephp/aut
 
 ### ミドルウェアに追加
 
-```php
-use Authentication\Middleware\AuthenticationMiddleware;
-use Authorization\Middleware\AuthorizationMiddleware;
-
-$middlewareQueue
-  ->add(new \Authentication\Middleware\AuthenticationMiddleware($this))
-  ->add(new \Authorization\Middleware\AuthorizationMiddleware($this, [
-      'unauthorizedHandler' => [
-          'className' => 'Authorization.Redirect',
-          'url' => '/users/login',
-          'queryParam' => 'redirect',
-      ],
-  ]));
-
-// コントローラ側でこんな感じで呼び出せるように。
-$this->Authentication->addUnauthenticatedActions(['login']);
-$this->Authorization->skipAuthorization(['index']);
-```
-
 ## ルーティング設定
-
-```
-/tutorial/todo でアクセスできるように。
-```
 
 ## Users（ログイン/サインアップ）
 

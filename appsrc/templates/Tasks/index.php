@@ -1,63 +1,53 @@
+<!-- templates/Tasks/index.php -->
+<h1>タスク一覧</h1>
+
+<?= $this->Form->create(null, ['type' => 'get']) ?>
+<?= $this->Form->control('title', ['label' => 'タイトル', 'value' => $this->request->getQuery('title')]) ?>
+<?= $this->Form->control('is_done', [
+    'type' => 'select',
+    'options' => ['' => '全て', '0' => '未完了', '1' => '完了'],
+    'label' => 'ステータス',
+    'value' => $this->request->getQuery('is_done')
+]) ?>
+<?= $this->Form->control('overdue', ['type' => 'checkbox', 'label' => '期限切れ（未完了のみ）', 'checked' => (bool)$this->request->getQuery('overdue')]) ?>
+<?= $this->Form->button('絞り込み') ?>
+<?= $this->Html->link('クリア', ['action' => 'index']) ?>
+<?= $this->Form->end() ?>
+
+<p><?= $this->Html->link('新規タスク', ['action' => 'add']) ?></p>
+
+<table>
+    <thead>
+        <tr>
+            <th>タイトル</th>
+            <th>期限</th>
+            <th>優先度</th>
+            <th>状態</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($tasks as $task): ?>
+            <tr>
+                <td><?= h($task->title) ?></td>
+                <td><?= h($task->due_date) ?></td>
+                <td><?= h($task->priority) ?></td>
+                <td><?= $task->is_done ? '完了' : '未完了' ?></td>
+                <td>
+                    <?= $this->Html->link('表示', ['action' => 'view', $task->id]) ?>
+                    <?= $this->Html->link('編集', ['action' => 'edit', $task->id]) ?>
+                    <?= $this->Form->postLink(
+                        $task->is_done ? '未完了へ' : '完了にする',
+                        ['action' => 'toggle', $task->id],
+                        ['confirm' => '切り替えますか？']
+                    ) ?>
+                    <?= $this->Form->postLink('削除', ['action' => 'delete', $task->id], ['confirm' => '削除しますか？']) ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+
 <?php
-/**
- * @var \App\View\AppView $this
- * @var iterable<\App\Model\Entity\Task> $tasks
- */
+// $this->element('pagination') ?? ''
 ?>
-<div class="tasks index content">
-    <?= $this->Html->link(__('New Task'), ['action' => 'add'], ['class' => 'button float-right']) ?>
-    <h3><?= __('Tasks') ?></h3>
-    <div class="table-responsive">
-        <table>
-            <thead>
-                <tr>
-                    <th><?= $this->Paginator->sort('id') ?></th>
-                    <th><?= $this->Paginator->sort('user_id') ?></th>
-                    <th><?= $this->Paginator->sort('title') ?></th>
-                    <th><?= $this->Paginator->sort('due_date') ?></th>
-                    <th><?= $this->Paginator->sort('priority') ?></th>
-                    <th><?= $this->Paginator->sort('is_done') ?></th>
-                    <th><?= $this->Paginator->sort('created') ?></th>
-                    <th><?= $this->Paginator->sort('modified') ?></th>
-                    <th class="actions"><?= __('Actions') ?></th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($tasks as $task): ?>
-                <tr>
-                    <td><?= $this->Number->format($task->id) ?></td>
-                    <td><?= $task->hasValue('user') ? $this->Html->link($task->user->email, ['controller' => 'Users', 'action' => 'view', $task->user->id]) : '' ?></td>
-                    <td><?= h($task->title) ?></td>
-                    <td><?= h($task->due_date) ?></td>
-                    <td><?= $this->Number->format($task->priority) ?></td>
-                    <td><?= h($task->is_done) ?></td>
-                    <td><?= h($task->created) ?></td>
-                    <td><?= h($task->modified) ?></td>
-                    <td class="actions">
-                        <?= $this->Html->link(__('View'), ['action' => 'view', $task->id]) ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $task->id]) ?>
-                        <?= $this->Form->postLink(
-                            __('Delete'),
-                            ['action' => 'delete', $task->id],
-                            [
-                                'method' => 'delete',
-                                'confirm' => __('Are you sure you want to delete # {0}?', $task->id),
-                            ]
-                        ) ?>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-    <div class="paginator">
-        <ul class="pagination">
-            <?= $this->Paginator->first('<< ' . __('first')) ?>
-            <?= $this->Paginator->prev('< ' . __('previous')) ?>
-            <?= $this->Paginator->numbers() ?>
-            <?= $this->Paginator->next(__('next') . ' >') ?>
-            <?= $this->Paginator->last(__('last') . ' >>') ?>
-        </ul>
-        <p><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
-    </div>
-</div>
