@@ -1,96 +1,99 @@
 <?php
+
 /**
- * Routes configuration.
- *
- * In this file, you set up routes to your controllers and their actions.
- * Routes are very important mechanism that allows you to freely connect
- * different URLs to chosen controllers and their actions (functions).
- *
- * It's loaded within the context of `Application::routes()` method which
- * receives a `RouteBuilder` instance `$routes` as method argument.
- *
- * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @link          https://cakephp.org CakePHP(tm) Project
- * @license       https://opensource.org/licenses/mit-license.php MIT License
+ * URLパターンと、呼び出すコントローラ／アクションの対応表を書くファイル
+ * 
+ * つまり、「どのURLを叩いたときに、どの処理を実行するか」を決める“地図”のようなもの。
+ * 
  */
 
 use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\RouteBuilder;
 
-/*
- * This file is loaded in the context of the `Application` class.
- * So you can use `$this` to reference the application class instance
- * if required.
- */
 return function (RouteBuilder $routes): void {
-    /*
-     * The default class to use for all routes
-     *
-     * The following route classes are supplied with CakePHP and are appropriate
-     * to set as the default:
-     *
-     * - Route
-     * - InflectedRoute
-     * - DashedRoute
-     *
-     * If no call is made to `Router::defaultRouteClass()`, the class used is
-     * `Route` (`Cake\Routing\Route\Route`)
-     *
-     * Note that `Route` does not do any inflections on URLs which will result in
-     * inconsistently cased URLs when used with `{plugin}`, `{controller}` and
-     * `{action}` markers.
+    /**
+     * URLの命名ルールを決める
+     * 
+     * DashedRoute なら、
+     * /user-profile → UserProfileController で解釈する。
      */
     $routes->setRouteClass(DashedRoute::class);
 
+    /**
+     * 「/（ルートパス）以下のURLはこの中で定義する」というグループ。
+     * 
+     * この中に connect() を書いて、URLとコントローラを結びつける。
+     */
     $routes->scope('/', function (RouteBuilder $builder): void {
-        /*
-         * Here, we are connecting '/' (base path) to a controller called 'Pages',
-         * its action called 'display', and we pass a param to select the view file
-         * to use (in this case, templates/Pages/home.php)...
-         */
+        // / にアクセスしたら、PagesController の display('home') を呼ぶ。
         $builder->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
 
-        /*
-         * ...and connect the rest of 'Pages' controller's URLs.
-         */
+        // /pages/〇〇 にアクセスしたら PagesController::display(〇〇) を呼ぶ。
         $builder->connect('/pages/*', 'Pages::display');
 
-        /*
-         * Connect catchall routes for all controllers.
-         *
-         * The `fallbacks` method is a shortcut for
-         *
-         * ```
-         * $builder->connect('/{controller}', ['action' => 'index']);
-         * $builder->connect('/{controller}/{action}/*', []);
-         * ```
-         *
-         * It is NOT recommended to use fallback routes after your initial prototyping phase!
-         * See https://book.cakephp.org/5/en/development/routing.html#fallbacks-method for more information
-         */
+        // コントローラ名とアクション名に対応するURLを自動生成するやつ。
         $builder->fallbacks();
-    });
 
-    /*
-     * If you need a different set of middleware or none at all,
-     * open new scope and define routes there.
-     *
-     * ```
-     * $routes->scope('/api', function (RouteBuilder $builder): void {
-     *     // No $builder->applyMiddleware() here.
-     *
-     *     // Parse specified extensions from URLs
-     *     // $builder->setExtensions(['json', 'xml']);
-     *
-     *     // Connect API actions here.
-     * });
-     * ```
-     */
+        /**
+         * /users
+         * 
+         * 単純な固定ページ 3 つ
+         */
+        $builder->scope('/users', function (RouteBuilder $b) {
+            $b->connect('/login', ['controller' => 'Users', 'action' => 'login']);
+            $b->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
+            $b->connect('/register', ['controller' => 'Users', 'action' => 'register']);
+        });
+
+        /**
+         * /tasks
+         * 
+         * setMethods() で許可メソッドを制御（セキュリティ高い）
+         * setPatterns(['id' => '\d+']) で id を数字だけに限定（安全）
+         * setPass(['id']) で URL {id} をコントローラの引数 $id に渡す
+         * 
+         * 認証・認可・安全設計。
+         */
+        $builder->scope('/tasks', function (RouteBuilder $b) {
+            $b->connect('/', ['controller' => 'Tasks', 'action' => 'index'])->setMethods(['GET']);
+            $b->connect('/add', ['controller' => 'Tasks', 'action' => 'add'])->setMethods(['GET', 'POST']);
+            $b->connect('/view/{id}', ['controller' => 'Tasks', 'action' => 'view'])
+                ->setPatterns(['id' => '\d+'])->setPass(['id'])->setMethods(['GET']);
+            $b->connect('/edit/{id}', ['controller' => 'Tasks', 'action' => 'edit'])
+                ->setPatterns(['id' => '\d+'])->setPass(['id'])->setMethods(['GET', 'POST', 'PUT', 'PATCH']);
+            $b->connect('/delete/{id}', ['controller' => 'Tasks', 'action' => 'delete'])
+                ->setPatterns(['id' => '\d+'])->setPass(['id'])->setMethods(['POST', 'DELETE']);
+            $b->connect('/toggle/{id}', ['controller' => 'Tasks', 'action' => 'toggle'])
+                ->setPatterns(['id' => '\d+'])->setPass(['id'])->setMethods(['POST']);
+        });
+
+        /**
+         * /articles
+         * 
+         * 「action名をURLに含めてOK」というゆるいルーティング。
+         * setPatterns(['action' => 'add|edit|view|delete|index']) で許可アクションを限定
+         * でも {id} のバリデーションはない（数字以外でも通る）
+         */
+        $builder->scope('/articles', function (RouteBuilder $b) {
+            $b->connect('/', ['controller' => 'Articles', 'action' => 'index']);
+            $b->connect('/:action/*', ['controller' => 'Articles'])
+                ->setPatterns(['action' => 'add|edit|view|delete|index']);
+        });
+
+        /**
+         * /notes
+         * 
+         * 一番ざっくり。
+         * /:action/* なので、action と後続の任意パラメータを全部受け取る。
+         * 
+         * setPatterns() もメソッド制限もなし
+         * ほぼ CakePHP のデフォルト動作
+         * URLも自由だけど、間違ったURLも通る（安全性・可読性やや低め）
+         */
+        $builder->scope('/notes', function (RouteBuilder $b) {
+            $b->connect('/', ['controller' => 'Notes', 'action' => 'index']);
+            $b->connect('/:action/*', ['controller' => 'Notes'])
+                ->setPass(['id']);
+        });
+    });
 };
