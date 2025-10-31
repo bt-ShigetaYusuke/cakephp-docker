@@ -45,6 +45,17 @@ class TaskPolicy
     return true;
   }
 
+  /**
+   * getIdentifier()
+   * 
+   * Authentication（認証）プラグインで提供されている、ログイン中のユーザーの
+   * ID を取り出すためのメソッド。
+   * 
+   * 今ログインしているユーザーの主キーを返す関数。
+   * 
+   * この Task の持ち主IDと、今ログインしているユーザIDが同じか？をチェックしている。
+   * コントローラの中でも同じように使用可能。
+   */
   public function canView(IdentityInterface $user, Task $task): bool
   {
     return $task->user_id === $user->getIdentifier();

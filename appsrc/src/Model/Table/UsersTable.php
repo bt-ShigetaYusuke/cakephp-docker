@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Model\Table;
@@ -42,6 +43,12 @@ class UsersTable extends Table
         parent::initialize($config);
 
         $this->setTable('users');
+        /**
+         * このテーブルのレコードを文字で表示するときに使うカラムを指定
+         * 
+         * 例えばビューやデバッグで$userを出力したとき、
+         * emailの値が代表的な名前として使われる。
+         */
         $this->setDisplayField('email');
         $this->setPrimaryKey('id');
 
