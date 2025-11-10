@@ -27,7 +27,7 @@ http://localhost:1024/tasks
 ```
 users
   id, email(unique), password, created, modified
-
+****
 tasks
   id, user_id(FK), title, due_date, priority, is_done, created, modified
 ```
@@ -50,3 +50,9 @@ SHOW CREATE TABLE :table名
 ```
 
 # セッション
+
+# gpt
+
+```
+
+```

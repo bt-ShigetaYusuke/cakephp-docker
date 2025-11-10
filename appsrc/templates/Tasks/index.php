@@ -1,6 +1,23 @@
 <!-- templates/Tasks/index.php -->
 <h1>タスク一覧</h1>
 
+<?php
+/**
+ * タスクの絞り込み検索フォーム（GETメソッド）
+ * 
+ * ・type => 'get'だから、フォーム送信時にはデータはURLクエリとして送信される
+ * ・$this->request->getQuery()で、現在のURLに含まれているクエリパラメータを取得する
+ * 
+ * 1. View（フォーム）でGET送信する
+ * → URLにクエリがつく
+ * 
+ * 2. Controller で $this->request->getQueryParams() で受け取る
+ * → 送られてきた検索条件を $q に全部まとめて入れる
+ * 
+ * 3. $query に where() を重ねていって条件をつける
+ * → Tasks テーブルから絞り込み条件！
+ */
+?>
 <?= $this->Form->create(null, ['type' => 'get']) ?>
 <?= $this->Form->control('title', ['label' => 'タイトル', 'value' => $this->request->getQuery('title')]) ?>
 <?= $this->Form->control('is_done', [
@@ -36,6 +53,17 @@
                 <td>
                     <?= $this->Html->link('表示', ['action' => 'view', $task->id]) ?>
                     <?= $this->Html->link('編集', ['action' => 'edit', $task->id]) ?>
+                    <?php
+                    /**
+                     * 完了／未完了の切り替えボタン
+                     * 
+                     * - 三項演算子でボタンの表示切り替え
+                     * - confirm で確認ダイアログを表示
+                     * 
+                     * Html->link() は GETリクエスト
+                     * Form->postLink() は 見た目はリンクなのに内部的にフォームを送信してPOST送信する
+                     */
+                    ?>
                     <?= $this->Form->postLink(
                         $task->is_done ? '未完了へ' : '完了にする',
                         ['action' => 'toggle', $task->id],
