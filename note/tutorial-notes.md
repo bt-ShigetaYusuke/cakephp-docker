@@ -1,3 +1,7 @@
+# 次回
+
+- figma でテーブル定義書作成から
+
 # URL
 
 http://localhost:1024/notes
