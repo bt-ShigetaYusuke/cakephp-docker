@@ -67,7 +67,7 @@
                     <?= $this->Form->postLink(
                         $task->is_done ? '未完了へ' : '完了にする',
                         ['action' => 'toggle', $task->id],
-                        ['confirm' => '切り替えますか？']
+                        // ['confirm' => '切り替えますか？']
                     ) ?>
                     <?= $this->Form->postLink('削除', ['action' => 'delete', $task->id], ['confirm' => '削除しますか？']) ?>
                 </td>
